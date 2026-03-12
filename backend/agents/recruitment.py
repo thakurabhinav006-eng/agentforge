@@ -1,6 +1,6 @@
 from agents.base import BaseAgent
 from core.schemas import AgentInfo
-from core.llm import chat_openai
+from core.llm import chat_groq
 
 SYSTEM = """You are an AI recruitment assistant. You help with writing job descriptions,
 screening resumes, generating interview questions, evaluating candidates, and creating
@@ -15,7 +15,7 @@ class RecruitmentAgent(BaseAgent):
         description="Write job posts, screen resumes, generate interview questions, evaluate candidates",
         category="multi-agent",
         icon="users",
-        provider="openai",
+        provider="groq",
     )
 
     async def run(self, message: str, session_id=None, context=None):
@@ -25,7 +25,7 @@ class RecruitmentAgent(BaseAgent):
             content = f"Resume/Document:\n```\n{context['file_content'][:8000]}\n```\n\n{message}"
         history.append({"role": "user", "content": content})
         msgs = [{"role": "system", "content": SYSTEM}] + history
-        resp = chat_openai(msgs)
+        resp = chat_groq(msgs)
         reply = resp.choices[0].message.content
         history.append({"role": "assistant", "content": reply})
         return {"reply": reply, "session_id": sid}

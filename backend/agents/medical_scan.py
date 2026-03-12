@@ -1,6 +1,6 @@
 from agents.base import BaseAgent
 from core.schemas import AgentInfo
-from core.llm import chat_openai
+from core.llm import chat_groq
 
 SYSTEM = """You are an AI medical education assistant. You help users understand
 medical imaging concepts, explain common findings in X-rays, CT scans, and MRIs.
@@ -16,7 +16,7 @@ class MedicalScanAgent(BaseAgent):
         description="Learn about medical imaging, scan types, and common findings (educational only)",
         category="starter",
         icon="scan",
-        provider="openai",
+        provider="groq",
         supports_file=True,
     )
 
@@ -24,7 +24,7 @@ class MedicalScanAgent(BaseAgent):
         sid, history = self.get_session(session_id)
         history.append({"role": "user", "content": message})
         msgs = [{"role": "system", "content": SYSTEM}] + history
-        resp = chat_openai(msgs)
+        resp = chat_groq(msgs)
         reply = resp.choices[0].message.content
         history.append({"role": "assistant", "content": reply})
         return {"reply": reply, "session_id": sid}

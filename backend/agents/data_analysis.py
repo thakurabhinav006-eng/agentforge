@@ -1,6 +1,6 @@
 from agents.base import BaseAgent
 from core.schemas import AgentInfo
-from core.llm import chat_openai
+from core.llm import chat_groq
 
 SYSTEM = """You are an AI data analysis expert. You help users analyze datasets,
 generate insights, create visualizations descriptions, write SQL queries,
@@ -16,7 +16,7 @@ class DataAnalysisAgent(BaseAgent):
         description="Analyze datasets, generate insights, and create visualization suggestions",
         category="starter",
         icon="bar-chart",
-        provider="openai",
+        provider="groq",
         supports_file=True,
     )
 
@@ -27,7 +27,7 @@ class DataAnalysisAgent(BaseAgent):
             content = f"Data:\n```\n{context['file_content'][:8000]}\n```\n\nUser query: {message}"
         history.append({"role": "user", "content": content})
         msgs = [{"role": "system", "content": SYSTEM}] + history
-        resp = chat_openai(msgs)
+        resp = chat_groq(msgs)
         reply = resp.choices[0].message.content
         history.append({"role": "assistant", "content": reply})
         return {"reply": reply, "session_id": sid}

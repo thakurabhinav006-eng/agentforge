@@ -1,6 +1,6 @@
 from agents.base import BaseAgent
 from core.schemas import AgentInfo
-from core.llm import chat_anthropic
+from core.llm import chat_groq
 
 SYSTEM = """You are a senior code reviewer. You review code for bugs, security vulnerabilities,
 performance issues, code smells, and best practices. Provide specific, actionable feedback
@@ -15,7 +15,7 @@ class CodeReviewerAgent(BaseAgent):
         description="Review code for bugs, security issues, performance, and best practices",
         category="multi-agent",
         icon="code",
-        provider="anthropic",
+        provider="groq",
         supports_file=True,
     )
 
@@ -25,7 +25,7 @@ class CodeReviewerAgent(BaseAgent):
         if context and context.get("file_content"):
             content = f"Code to review:\n```\n{context['file_content'][:12000]}\n```\n\n{message}"
         history.append({"role": "user", "content": content})
-        resp = chat_anthropic(history, system=SYSTEM)
-        reply = resp.content[0].text
+        resp = chat_groq([{"role": "system", "content": SYSTEM}] + history)
+        reply = resp.choices[0].message.content
         history.append({"role": "assistant", "content": reply})
         return {"reply": reply, "session_id": sid}

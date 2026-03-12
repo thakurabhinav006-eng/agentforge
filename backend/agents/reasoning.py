@@ -1,6 +1,6 @@
 from agents.base import BaseAgent
 from core.schemas import AgentInfo
-from core.llm import chat_anthropic
+from core.llm import chat_groq
 
 SYSTEM = """You are an advanced reasoning agent. You solve complex problems using
 chain-of-thought reasoning. Break down problems step by step, consider multiple
@@ -16,13 +16,13 @@ class ReasoningAgent(BaseAgent):
         description="Solve complex problems with step-by-step chain-of-thought reasoning",
         category="starter",
         icon="brain",
-        provider="anthropic",
+        provider="groq",
     )
 
     async def run(self, message: str, session_id=None, context=None):
         sid, history = self.get_session(session_id)
         history.append({"role": "user", "content": message})
-        resp = chat_anthropic(history, system=SYSTEM)
-        reply = resp.content[0].text
+        resp = chat_groq([{"role": "system", "content": SYSTEM}] + history)
+        reply = resp.choices[0].message.content
         history.append({"role": "assistant", "content": reply})
         return {"reply": reply, "session_id": sid}
