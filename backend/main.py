@@ -17,6 +17,11 @@ app.add_middleware(
 app.include_router(agents_router)
 
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to AgentForge API", "docs": "/docs", "health": "/health"}
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "agents": 20}
